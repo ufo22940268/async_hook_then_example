@@ -6,6 +6,7 @@ const fs = require('fs');
  */
 class Service {
   constructor() {
+    this.eid = asyncHooks.executionAsyncId()
     this.store = {};
     this.hooks = asyncHooks.createHook({
       init: (asyncId, type, triggerAsyncId) => {
@@ -22,16 +23,16 @@ class Service {
   }
 
   async run(fn) {
-    this.store[asyncHooks.executionAsyncId()] = {};
+    this.store[this.eid] = {};
     await fn();
   }
 
   set(key, value) {
-    this.store[asyncHooks.executionAsyncId()][key] = value;
+    this.store[this.eid][key] = value;
   }
 
   get(key) {
-    const state = this.store[asyncHooks.executionAsyncId()];
+    const state = this.store[this.eid];
     if (state) {
       return state[key];
     } else {
